@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Soramimi</title>
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+$(function(){
+  $('#englishtext').html( '' );
+});
+</script>
+<style>
+.balloon{
+  position: relative;
+  padding: 20px;
+  background-color: #fff3ad;
+  display: inline-block;     /* 横幅を自動で変更 */
+  border-radius: 10px;
+}
+
+.balloon::before{
+  content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: 20px;
+  bottom: -15px;
+  border-top: 15px solid #fff3ad;
+  border-right: 15px solid transparent;
+  border-left: 15px solid transparent;
+}
+
+/* 吹き出し本体 */
+.balloon1{
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #0888ff;
+  margin-left: 110px;          /* 左に余白を設ける */
+}
+/* 画像 - 絶対配置で左上に配置 */
+.balloon1 .icon{
+  position: absolute;
+  left: -110px;
+  top: 0;
+}
+/* 三角アイコン */
+.balloon1::before{
+  content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: -15px;
+  top: 20px;
+  border-right: 15px solid #0888ff;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+}
+</style>
+
+</head>
+<body>
+        <div id="voicerdiv" onclick="speechExamplification(this);" >
+        </div>
+
+        <ul style="display:none;"><li><audio id="englishspeech" src="" controls autoplay></audio></li></ul>
+
+        <hr/>
+	
+	<h3>認識結果</h3>
+	
+	<input type="button" id="recordingstart" onclick="startRecording(this);" style="display: block;" value="録音スタート"/>
+	<input type="button" id="recordingstop" onclick="stopRecording(this);" style="display: none;" value="停止"/>
+
+        <table border="0">
+        <tr>
+	<td id="recognizedresult">&nbsp;</td>
+        </tr>
+        </table>
+
+	<h3>Status</h3>
+	<pre id="log"></pre>
+
+	<script>
+	function __log(e, data) {
+		log.innerHTML += e + " " + (data || '') + '\n';
+	}
+
+	var audio_context;
+	var recorder;
+
+	function startUserMedia(stream){
+		var input = audio_context.createMediaStreamSource(stream);
+		__log('Media stream created.');
+		
+		recorder = new Recorder(input);
+		__log('Recorder initialised.');
+	}
+
+	function startRecording(button){
+		recorder && recorder.record();
+                $('#recordingstart').css( 'display', 'none' );
+                $('#recordingstop').css( 'display', 'block' );
+		__log('Recording...');
+	}
+
+	function stopRecording(button){
+		recorder && recorder.stop();
+                $('#recordingstart').css( 'display', 'block' );
+                $('#recordingstop').css( 'display', 'none' );
+		__log('Stopped recording.');
+		
+		sendRecordData();
+		recorder.clear();
+	}
+
+	function nextQuestion(button){
+                q_idx ++;
+                if( q_idx == questions.length ){ q_idx = 0; }
+                $('#englishtext').html( questions[q_idx] );
+                $('#recognizedresult').html( '&nbsp;' );
+                $('#recognizedresult').removeClass( 'balloon1' );
+                $('#score').html( '&nbsp;' );
+	}
+
+	function sendRecordData(){
+		recorder && recorder.exportWAV(function(blob) {
+			var fd = new FormData();
+			fd.append( 'data', blob );
+			fd.append( 'lang', lang );
+			$.ajax({
+				type: 'POST',
+				url: './s2t',
+				data: fd,
+				processData: false,
+				contentType: false,
+			}).done( function( result ){
+                                var data = JSON.parse( result );
+                                console.log( data.result );
+                                if( data.result == null || data.result.length == 0 ){ data.result = '???'; }
+                                $('#recognizedresult').html( data.result );
+                                $('#recognizedresult').addClass( 'balloon1' );
+			});
+		});
+	}
+
+    function speechExamplification( button ){
+      var englishtext = $('#englishtext').html();
+      var voice = $('#voice').val();
+      $('#englishspeech').attr( 'src', './t2s?text=' + englishtext + '&voice=' + voice );
+    }
+
+	window.onload = function init(){
+		try{
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			window.URL = window.URL || window.webkitURL;
+			
+			audio_context = new AudioContext;
+			__log('Audio context set up.');
+			__log('navigator.mediaDevices.getUserMedia ' + (navigator.mediaDevices.getUserMedia ? 'available.' : 'not present!'));
+		}
+		catch (e){
+			alert('No web audio support in this browser!');
+		}
+		
+		navigator.mediaDevices.getUserMedia({audio: true}, startUserMedia, function(e) {
+			__log('No live audio input: ' + e);
+		});
+	};
+
+
+	</script>
+
+	<script src="./recorder.js"></script>
+</body>
+</html>
+
