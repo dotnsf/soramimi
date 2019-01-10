@@ -62,6 +62,11 @@ $(function(){
   border-top: 15px solid transparent;
   border-bottom: 15px solid transparent;
 }
+
+a.result{
+  color: #ffffff;
+  font-weight: bold;
+}
 </style>
 
 </head>
@@ -160,12 +165,12 @@ $(function(){
                                 var data = JSON.parse( result );
                                 console.log( data );
                                 var result_html = "";
-                                if( data.status ){
+                                if( data.status && data.results ){
                                   for( var i = 0; i < data.results.length; i ++ ){
                                     var transcript = data.results[i].alternatives[0].transcript;
                                     var confidence = data.results[i].alternatives[0].confidence;
 
-                                    var a = '<a href="#" title="' + transcript + ' (' + confidence + ')">' + transcript + '</a>';
+                                    var a = '<a class="result" href="#" title="' + transcript + ' (' + confidence + ')">' + transcript + '</a>';
                                     result_html += a;
                                   }
 

@@ -32,12 +32,12 @@ app.get( '/', function( req, res ){
 });
 
 app.post( '/s2t', function( req, res ){
-console.log( req.body );
+  //console.log( req.body );
   //. https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/?node#recognize_sessionless_nonmp12
   //. req.file.path に audio/wav
   var filepath = req.file.path;
   var model = req.body.voice;  //'ja-JP_BroadbandModel';
-console.log( 'model = ' + model );
+  ///console.log( 'model = ' + model );
 
   var params = {
     audio: fs.createReadStream( filepath ),
@@ -45,10 +45,10 @@ console.log( 'model = ' + model );
     model: model,
     timestamps: true
   };
-console.log( params );
+  //console.log( params );
   speech_to_text.recognize( params, function( error, result ){
     if( error ){
-console.log( error );
+      console.log( JSON.stringify( error, null, 2 ) );
       res.write( JSON.stringify( { status: false, error: error }, 2, null ) );
       res.end();
     }else{
