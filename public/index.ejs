@@ -77,9 +77,9 @@ a.result{
         <ul style="display:none;"><li><audio id="englishspeech" src="" controls autoplay></audio></li></ul>
 
         <hr/>
-	
+
 	<h3>認識結果</h3>
-	
+
         <span>
         <img src="./microphone3_businessman.png" id="recordingstart" title="録音スタート" width="200" onClick="startRecording(this);" style="display: block; border: 5px solid cyan;"/>
         <img src="./microphone3_businessman.png" id="recordingstop" title="録音ストップ" width="200" onClick="stopRecording(this);" style="display: none; border: 5px solid red;"/>
@@ -122,7 +122,7 @@ a.result{
 	function startUserMedia(stream){
 		var input = audio_context.createMediaStreamSource(stream);
 		__log('Media stream created.');
-		
+
 		recorder = new Recorder(input);
 		__log('Recorder initialised.');
 	}
@@ -142,7 +142,7 @@ a.result{
                 $('#recordingstart').css( 'display', 'block' );
                 $('#recordingstop').css( 'display', 'none' );
 		__log('Stopped recording.');
-		
+
 		sendRecordData();
 		recorder.clear();
 	}
@@ -163,6 +163,7 @@ a.result{
 				contentType: false,
 			}).done( function( result ){
                                 var data = JSON.parse( result );
+        __log( JSON.stringify( data, null, 2 ) );
                                 console.log( data );
                                 var result_html = "";
                                 if( data.status && data.results ){
@@ -197,7 +198,7 @@ a.result{
 		try{
 			window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
 			//window.URL = window.URL || window.webkitURL;
-			
+
 			audio_context = new AudioContext;
 			__log('Audio context set up.');
 			__log('navigator.mediaDevices.getUserMedia ' + (navigator.mediaDevices.getUserMedia ? 'available.' : 'not present!'));
@@ -205,7 +206,7 @@ a.result{
 		catch (e){
 			alert('No web audio support in this browser!');
 		}
-		
+
 		navigator.mediaDevices.getUserMedia({audio: true}).then( startUserMedia );
 	};
 
@@ -215,4 +216,3 @@ a.result{
 	<script src="./recorder.js"></script>
 </body>
 </html>
-

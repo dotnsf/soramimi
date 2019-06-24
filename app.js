@@ -11,8 +11,8 @@ var express = require( 'express' ),
     app = express();
 var speech_to_text = null;
 if( settings.s2t_apikey ){
-  //speech_to_text = new s2t({ iam_apikey: settings.s2t_apikey, url: 'https://gateway.watsonplatform.net/speech-to-text/api/' } ); 
-  speech_to_text = new s2t({ username: 'apikey', password: settings.s2t_apikey, url: settings.s2t_url } ); 
+  //speech_to_text = new s2t({ iam_apikey: settings.s2t_apikey, url: 'https://gateway.watsonplatform.net/speech-to-text/api/' } );
+  speech_to_text = new s2t({ username: 'apikey', password: settings.s2t_apikey, url: settings.s2t_url } );
 }else if( settings.s2t_username && settings.s2t_password ){
   speech_to_text = new s2t({ username: settings.s2t_username, password: settings.s2t_password });
 }
@@ -43,6 +43,7 @@ app.post( '/s2t', function( req, res ){
     audio: fs.createReadStream( filepath ),
     content_type: 'audio/wav',
     model: model,
+    max_alternatives: 3,
     timestamps: true
   };
   //console.log( params );
@@ -64,6 +65,3 @@ app.post( '/s2t', function( req, res ){
 var port = appEnv.port || 3000;
 app.listen( port );
 console.log( "server starting on " + port + " ..." );
-
-
-
