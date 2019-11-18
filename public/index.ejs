@@ -157,33 +157,35 @@ a.result{
 
 			$.ajax({
 				type: 'POST',
-				url: './s2t',
+				//url: './s2t',
+				url: './spleeter_s2t',
 				data: fd,
 				processData: false,
 				contentType: false,
 			}).done( function( result ){
-                                var data = JSON.parse( result );
+        console.log( result );
+        var data = JSON.parse( result );
         __log( JSON.stringify( data, null, 2 ) );
-                                console.log( data );
-                                var result_html = "";
-                                if( data.status && data.results ){
-                                  for( var i = 0; i < data.results.length; i ++ ){
-                                    var transcript = data.results[i].alternatives[0].transcript;
-                                    var confidence = data.results[i].alternatives[0].confidence;
+        console.log( data );
+        var result_html = "";
+        if( data.status && data.results ){
+          for( var i = 0; i < data.results.length; i ++ ){
+            var transcript = data.results[i].alternatives[0].transcript;
+            var confidence = data.results[i].alternatives[0].confidence;
 
-                                    var a = '<a class="result" href="#" title="' + transcript + ' (' + confidence + ')">' + transcript + '</a>';
-                                    result_html += a;
-                                  }
+            var a = '<a class="result" href="#" title="' + transcript + ' (' + confidence + ')">' + transcript + '</a>';
+            result_html += a;
+          }
 
-                                  if( result_html == "" ){
-                                    result_html = '<font style="font-size: 40px">?</font>';
-                                  }
-                                }else{
-                                  result_html = '<font style="font-size: 40px">?</font>';
-                                }
+          if( result_html == "" ){
+            result_html = '<font style="font-size: 40px">?</font>';
+          }
+        }else{
+          result_html = '<font style="font-size: 40px">?</font>';
+        }
 
-                                $('#recognizedresult').html( result_html );
-                                $('#recognizedresult').addClass( 'balloon1' );
+        $('#recognizedresult').html( result_html );
+        $('#recognizedresult').addClass( 'balloon1' );
 			});
 		});
 	}

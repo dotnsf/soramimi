@@ -1,4 +1,5 @@
 node_modules/
+pretrained_models/
+out/
 package-lock.json
 settings.js.*
-
