@@ -9,7 +9,7 @@
         "body-parser": "^1.17.2",
         "child_process": "^1.0.2",
         "ejs": "^2.3.4",
-        "express": "4.1.x",
+        "express": "4.17.x",
         "multer": "^1.1.0",
         "watson-developer-cloud": "^3.13.0"
     },
