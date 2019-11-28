@@ -78,7 +78,11 @@ a.result{
 
         <hr/>
 
+        <!--
 	<h3>認識結果</h3>
+-->
+        <input type="checkbox" id="enable_spleeter" value="1"/>Spleeter を有効にする
+        <p/>
 
         <span>
         <img src="./microphone3_businessman.png" id="recordingstart" title="録音スタート" width="200" onClick="startRecording(this);" style="display: block; border: 5px solid cyan;"/>
@@ -152,13 +156,17 @@ a.result{
 			var fd = new FormData();
 			fd.append( 'data', blob );
 
-                        var voice = $('#voice option:selected').val();
+      var voice = $('#voice option:selected').val();
 			fd.append( 'voice', voice );
+
+      var enable_spleeter = $('#enable_spleeter:checked').val();
+      var post_url = enable_spleeter ? './spleeter_s2t' : './s2t';
+      __log( 'post_url = ' + post_url );
 
 			$.ajax({
 				type: 'POST',
 				//url: './s2t',
-				url: './spleeter_s2t',
+				url: post_url,
 				data: fd,
 				processData: false,
 				contentType: false,
