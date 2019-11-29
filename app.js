@@ -98,7 +98,7 @@ app.post( '/spleeter_s2t', function( req, res ){
       fs.rename( filepath, './out/' + filename + '/' + originalname, function(){
         var resultfile = './out/' + filename + '/result.json';
         if( error ){
-          var text = JSON.stringify( { status: false, error: err }, null, 2 );
+          var text = JSON.stringify( { status: false, error: error }, null, 2 );
           console.log( JSON.stringify( error, null, 2 ) );
           fs.writeFile( resultfile, text, function(){} );
           //res.write( JSON.stringify( { status: false, error: error }, 2, null ) );
